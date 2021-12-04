@@ -11,7 +11,7 @@ def main():
     str_out = start_game(numbers_draw, boards)
 
     dt = time.time() - start_time
-    print("Time:",dt)
+    print("Time:",dt) # Time is ~75ms
     print(str_out)
 
 def load_boards(lines):
