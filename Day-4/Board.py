@@ -3,6 +3,7 @@ class Board():
         self.l = l
         self.last_drawn = 0
         self.board_number = board_number
+        self.won_state = False
     
     def has_won(self) -> bool:
         # Counts how many marked squares are in each row
@@ -15,6 +16,8 @@ class Board():
         if 5 in col_marked or 5 in row_marked:
             return True
         return False
+    def change_won_state(self, b : bool):
+        self.won_state = b
 
     # Updates board with new drawn number.
     # Also stores the number drawn for use in sum_won()
