@@ -3,3 +3,4 @@
 *.json
 .obsidian
 Templater
+*.vimrc
