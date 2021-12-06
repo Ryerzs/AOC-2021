@@ -9,9 +9,9 @@ def main():
     # foreach squid at day i, increase index i by one
     for el in data_in:
         data[el] += 1
-    days = 256
     # Iterate through each day
-    for i in range(days):
+    days = 256
+    for _ in range(days):
         # Pop previous day, essentially shifting all days forward
         new = data.pop(0)
         # Add the amount that was on the previous day to day 6
