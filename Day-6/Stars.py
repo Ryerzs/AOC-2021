@@ -5,7 +5,7 @@ def main():
     data_in = [int(el) for el in open(path, 'r').read().splitlines()[0].split(",")]
     start_time = time.time()
     # Create data list
-    data = [0 for i in range(9)]
+    data = [0] * 9
     # foreach squid at day i, increase index i by one
     for el in data_in:
         data[el] += 1
