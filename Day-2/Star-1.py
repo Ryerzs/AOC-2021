@@ -1,5 +1,5 @@
 def main():
-    path = "Day-2/data.txt"
+    path = "data.txt"
     lines = [[el for el in row.split()] for row in open(path, "r",encoding="utf-8").read().splitlines()]
     lines = [[int(row.split()[1]),0]
                 if row.split()[0] == "forward" else (

@@ -14,7 +14,7 @@ def main():
     stars()
 
 def star1():
-    path = "Day-5\data.txt"
+    path = "data.txt"
     rows = [row for row in open(path, 'r').read().splitlines()]
     start_time = time.time()
     lines = [[[int(point) for point in coord.split(",")] for coord in row.split(" -> ")] for row in rows]

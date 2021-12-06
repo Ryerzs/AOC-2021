@@ -1,7 +1,7 @@
 import time
 
 def main():
-    path = "Day-1/data.txt"
+    path = "data.txt"
     lines = [int(row) for row in open(path, "r",encoding="utf-8").readlines()]
 
     start_time = time.time()

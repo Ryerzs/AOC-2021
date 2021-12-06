@@ -1,7 +1,7 @@
 import time
 
 def main():
-    path = "Day-3/data.txt"
+    path = "data.txt"
     # path = "Day-3/data.txt"
     lines = [[int(el) for el in row] for row in open(path, "r",encoding="utf-8").read().splitlines()]
     row = len(lines[0])

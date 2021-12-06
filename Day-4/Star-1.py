@@ -2,7 +2,7 @@ from Board import *
 import time
 
 def main():
-    path = "Day-4/data.txt"
+    path = "data.txt"
     lines = open(path, "r",encoding="utf-8").read().splitlines()
 
     start_time = time.time()
