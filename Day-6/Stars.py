@@ -20,7 +20,7 @@ def main():
         data[6] += new
         data.append(new)
     dt = time.time() - start_time
-    print(dt)
+    print(dt) # ~The only value I've gotten is 0.99 ms so I'll go with 1 ms
     print(sum(data))
 
 if __name__ == '__main__':
