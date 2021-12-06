@@ -1,5 +1,4 @@
 import time
-import numpy as np
 
 def main():
     path = "data.txt"
