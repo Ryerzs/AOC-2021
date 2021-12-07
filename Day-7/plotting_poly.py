@@ -15,31 +15,40 @@ def main():
     for el in data_in:
         data[el] += 1
 
-    fuel_cost_1, mid_1 = calc_fuel(data, calc_fuel_1, mi, ma)
-    fuel_cost_2, mid_2 = calc_fuel(data, calc_fuel_2, mi, ma)
+    # Fit a second degree polynokmial to get good initial guess
+    y = [calc_fuel_2(i, data) for i in range(3)]
+    c = y[0]
+    b = 2*y[1] -3*c/2 - y[2]/2
+    a = y[1] -b -c
+    mid = round(-b/(2*a))
 
-    print(fuel_cost_1, mid_1)
-    print(round(mid_1))
-    print(fuel_cost_2, mid_2)
-    print(round(mid_2))
+    fuel_cost_2, mid_2 = calc_fuel(data, calc_fuel_2, mid-2, mid+2)
+
+    # Fit a line to get an approximate initial guess
+    y = [calc_fuel_1_no_abs(i, data) for i in range(2)]
+    m = y[0]
+    k = y[1] - m
+    # our initial guess will be the root to the line
+    # So we solve 'kx + m = 0'
+    mid = round(-m/k)
+
+    fuel_cost_1, mid_1 = calc_fuel(data, calc_fuel_1, mid-300, mid+300)
 
     dt = time.time() - start_time
     print(dt)
-
-def calc_fuel_all(data, func, mi, ma):
-    fuel = []
-    x = [i for i in range(-2000, 3000)]
-    for i in x:
-        fuel.append([i, func(i, data)])
-    return fuel
+    print(fuel_cost_2, mid_2)
+    print(round(mid_2))
+    print(fuel_cost_1, mid_1)
+    print(round(mid_1))
 
 def calc_fuel(data, func, mi, ma):
-    p = math.ceil(math.log(ma, 2) )
-    mid = math.floor((ma-mi)/2)
+    p = math.ceil(math.log(ma-mi, 2) )
+    print(p)
+    mid = mi + math.floor((ma-mi)/2)
     low = mi
     upp = ma
     fuel_cost = func(mid, data)
-    for j in range(p+3):
+    for j in range(p):
         m1 = (mid - low)/2
         m2 = (upp - mid)/2
         f1 = func(mid - 1, data)
@@ -62,17 +71,11 @@ def calc_fuel_1(n, data):
 def calc_fuel_2(n, data):
     return sum([abs(n-i)*(abs(n-i)+1)/2*data[i] for i in range(len(data))])
 
-def calc_fuel_1_na(n, data):
+def calc_fuel_1_no_abs(n, data):
     return sum([(n - i)*data[i] for i in range(len(data))])
 
-def calc_fuel_2_na(n, data):
+def calc_fuel_2_no_abs(n, data):
     return sum([(n-i)*(n-i+1)/2*data[i] for i in range(len(data))])
-
-def calc_fuel_1_n(n, data):
-    return sum([abs(n - i)*data[i] for i in range(len(data))])
-
-def calc_fuel_2_n(n, data):
-    return sum([abs(n-i)*(abs(n-i)+1)/2*data[i] for i in range(len(data))])
 
 if __name__ == '__main__':
     main()

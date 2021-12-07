@@ -15,13 +15,35 @@ def main():
     for el in data_in:
         data[el] += 1
 
-    fuel_cost_1, mid_1 = calc_fuel(data, calc_fuel_1, mi, ma)
-    fuel_cost_2, mid_2 = calc_fuel(data, calc_fuel_2, mi, ma)
+    fuel_cost_1_1 = calc_fuel_all(data, calc_fuel_1_no_abs, mi, ma)
+    fuel_cost_1_2 = calc_fuel_all(data, calc_fuel_1, mi, ma)
+    x = [fuel_cost_1_1[i][0] for i in range(len(fuel_cost_1_1))]
+    y = [fuel_cost_1_1[i][1] for i in range(len(fuel_cost_1_1))]
+    plt.plot(x, y)
+    x = [fuel_cost_1_2[i][0] for i in range(len(fuel_cost_1_2))]
+    y = [fuel_cost_1_2[i][1] for i in range(len(fuel_cost_1_2))]
+    plt.plot(x, y)
+    plt.savefig("plot_star_1.pdf")
+    plt.close()
 
-    print(fuel_cost_1, mid_1)
-    print(round(mid_1))
-    print(fuel_cost_2, mid_2)
-    print(round(mid_2))
+    fuel_cost_2_1 = calc_fuel_all(data, calc_fuel_2_no_abs, mi, ma)
+    fuel_cost_2_2 = calc_fuel_all(data, calc_fuel_2, mi, ma)
+    x = [fuel_cost_2_1[i][0] for i in range(len(fuel_cost_2_1))]
+    y = [fuel_cost_2_1[i][1] for i in range(len(fuel_cost_2_1))]
+    plt.plot(x, y)
+    x = [fuel_cost_2_2[i][0] for i in range(len(fuel_cost_2_2))]
+    y = [fuel_cost_2_2[i][1] for i in range(len(fuel_cost_2_2))]
+    plt.plot(x, y)
+    plt.savefig("plot_star_2.pdf")
+    plt.close()
+
+    # Plot input data to guess it's distribution >:)
+    x = [i for i in range(ma + 1)]
+    plt.plot(x, data)
+    plt.savefig("plotted_input_data.pdf")
+    plt.close()
+
+
 
     dt = time.time() - start_time
     print(dt)
@@ -62,17 +84,11 @@ def calc_fuel_1(n, data):
 def calc_fuel_2(n, data):
     return sum([abs(n-i)*(abs(n-i)+1)/2*data[i] for i in range(len(data))])
 
-def calc_fuel_1_na(n, data):
+def calc_fuel_1_no_abs(n, data):
     return sum([(n - i)*data[i] for i in range(len(data))])
 
-def calc_fuel_2_na(n, data):
+def calc_fuel_2_no_abs(n, data):
     return sum([(n-i)*(n-i+1)/2*data[i] for i in range(len(data))])
-
-def calc_fuel_1_n(n, data):
-    return sum([abs(n - i)*data[i] for i in range(len(data))])
-
-def calc_fuel_2_n(n, data):
-    return sum([abs(n-i)*(abs(n-i)+1)/2*data[i] for i in range(len(data))])
 
 if __name__ == '__main__':
     main()
