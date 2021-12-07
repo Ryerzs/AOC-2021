@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 def main():
     path = "data.txt"
     data_in = [int(el) for el in open(path, 'r').read().splitlines()[0].split(",")]
