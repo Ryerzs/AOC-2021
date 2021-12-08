@@ -15,7 +15,7 @@ def main():
     dt = (time.time() - start_time)/N
     print("Star 1:", ans1)
     print("Star 2:", ans2)
-    print(dt) # Takes roughly 15.2 ms
+    print(dt) # Takes roughly 6.8 ms
 
 def star1(data):
     count = sum([sum([1 for el in row
@@ -26,9 +26,8 @@ def star1(data):
 def star2(data_test, data_out):
     total = 0
     for i in range(len(data_test)):
-        # Sort data alphabetically
-        d_t = ["".join(sorted(el)) for el in data_test[i]]
-        d_o = ["".join(sorted(el)) for el in data_out[i]]
+        d_t = [set(el) for el in data_test[i]]
+        d_o = [set(el) for el in data_out[i]]
         num = [""]*10
         num[1] = find_one(d_t)
         num[4] = find_four(d_t)
@@ -67,7 +66,7 @@ def find_two(data, three, five):
 
 def find_three(data, seven):
     return [el for el in data 
-        if len(set(el) & set(seven)) == 3
+        if len(el & seven) == 3
         and len(el) == 5
     ][0]
 
@@ -76,13 +75,13 @@ def find_four(data):
 
 def find_five(data, six):
     return [el for el in data 
-        if len(set(el) & set(six)) == 5
+        if len(el & six) == 5
         and len(el) == 5
     ][0]
 
 def find_six(data, seven):
     return [el for el in data 
-        if len(set(el) & set(seven)) == 2
+        if len(el & seven) == 2
         and len(el) == 6
     ][0]
 
@@ -94,7 +93,7 @@ def find_eight(data):
 
 def find_nine(data, four):
     return [el for el in data 
-        if len(set(el) & set(four)) == 4
+        if len(el & four) == 4
         and len(el) == 6
     ][0]
 
