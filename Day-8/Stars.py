@@ -15,7 +15,7 @@ def main():
     dt = (time.time() - start_time)/N
     print("Star 1:", ans1)
     print("Star 2:", ans2)
-    print(dt) # Takes roughly 5.7 ms
+    print(dt) # Takes roughly 3.8 ms
 
 def star1(data):
     count = sum([sum([1 for el in row
@@ -33,17 +33,11 @@ def star2(data_test, data_out):
         num[4] = find_four(d_t)
         num[7] = find_seven(d_t)
         num[8] = find_eight(d_t)
-        d_t = [el for el in d_t if not
-            (el == num[1] or el == num[4] or el == num[7] or el == num[8])]
         num[6] = find_six(d_t, num[7])
         num[9] = find_nine(d_t, num[4])
         num[3] = find_three(d_t, num[7])
-        d_t = [el for el in d_t if not
-            (el == num[6] or el == num[9] or el == num[3])]
         num[5] = find_five(d_t, num[6])
-        num[0] = find_zero(d_t, num[6], num[9])
-        d_t = [el for el in d_t if not
-            (el == num[5] or el == num[0])]
+        num[0] = find_zero(d_t)
         num[2] = d_t[0]
         total += get_output(d_o, num)
     return total
@@ -55,53 +49,59 @@ def get_output(data, num):
         number += str(num.index(el))
     return int(number)
 
-def find_zero(data, six, nine):
-    return [el for el in data 
-        if (el != six and el != nine
-        and len(el) == 6)
-    ][0]
+def find_zero(data):
+    for el in data:
+        if len(el) == 6:
+            data.remove(el) 
+            return el
 
 def find_one(data):
-    return [el for el in data if len(el)==2][0]
-
-def find_two(data, three, five):
-    return [el for el in data 
-        if el != three and el != five
-        and len(el) == 5
-    ][0]
+    for el in data:
+        if len(el) == 2:
+            data.remove(el) 
+            return el
 
 def find_three(data, seven):
-    return [el for el in data 
-        if len(el & seven) == 3
-        and len(el) == 5
-    ][0]
+    for el in data:
+        if len(el & seven) == 3 and len(el) == 5:
+            data.remove(el) 
+            return el
 
 def find_four(data):
-    return [el for el in data if len(el)==4][0]
+    for el in data:
+        if len(el) == 4:
+            data.remove(el) 
+            return el
 
 def find_five(data, six):
-    return [el for el in data 
-        if len(el & six) == 5
-        and len(el) == 5
-    ][0]
+    for el in data:
+        if len(el & six) == 5 and len(el) == 5:
+            data.remove(el) 
+            return el
 
 def find_six(data, seven):
-    return [el for el in data 
-        if len(el & seven) == 2
-        and len(el) == 6
-    ][0]
+    for el in data:
+        if len(el & seven) == 2 and len(el) == 6:
+            data.remove(el) 
+            return el
 
 def find_seven(data):
-    return [el for el in data if len(el)==3][0]
+    for el in data:
+        if len(el) == 3:
+            data.remove(el) 
+            return el
 
 def find_eight(data):
-    return [el for el in data if len(el)==7][0]
+    for el in data:
+        if len(el) == 7:
+            data.remove(el) 
+            return el
 
 def find_nine(data, four):
-    return [el for el in data 
-        if len(el & four) == 4
-        and len(el) == 6
-    ][0]
+    for el in data:
+        if len(el & four) == 4 and len(el) == 6:
+            data.remove(el) 
+            return el
 
 if __name__ == '__main__':
     main()
