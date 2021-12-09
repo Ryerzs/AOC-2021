@@ -17,11 +17,10 @@ class Board():
         total = 1
         ind_adj = [(p_in[0] -1, p_in[1]), (1 + p_in[0], p_in[1]),
                     (p_in[0], p_in[1]-1), (p_in[0], 1 + p_in[1])]
-        adj = []
         for p in ind_adj:
             if not self.inside_grid((p[0], p[1]), self.s):
                 continue
-            if self.checked[p[0]][p[1]] == False and self.data[p[0]][p[1]] != 9:
+            if not self.checked[p[0]][p[1]] and self.data[p[0]][p[1]] != 9:
                 total += self.find_basin_length(p)
         return total
     
