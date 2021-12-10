@@ -54,10 +54,9 @@ def star2(data, op_br):
     scores = []
     for row in data:
         score = 0
-        l = len(row)
-        for i in range(l):
+        for i in range(len(row)-1, -1, -1):
             score *= 5
-            score += op_br.index(row[l-i-1])+1
+            score += op_br.index(row[i])+1
         scores.append(score)
     if scores == []:
         return 0
