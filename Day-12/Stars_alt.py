@@ -42,22 +42,17 @@ def main():
             if data_in[i][1] == nodes[j].name:
                 new_ord[i][1] = j
     for p in new_ord:
-        nodes[p[0]].add_neighbor(nodes[p[1]])
         if nodes[p[1]].name != 'start' and nodes[p[0]].name != 'end':
             dic[nodes[p[0]].name].append(nodes[p[1]].name)
         if nodes[p[0]].name != 'start' and nodes[p[1]].name != 'end':
             dic[nodes[p[1]].name].append(nodes[p[0]].name)
-    for n in nodes:
-        n.set_ref_to_all(nodes)
     ans2 = 0
 
     path = ['start']
     counts = {}
     for d in dic:
         counts[d] = 0
-    ans2 = find_paths(path, dic, counts, "")
-
-    # ans2 = star2(nodes)
+    ans2 = find_paths(path, dic, counts, None)
 
     dt2 = time.time() - start_time
     print("Star 2:", ans2, "| Time:", dt2)
@@ -67,30 +62,21 @@ def find_paths(path, dic, counts, p_double):
     cur = path[-1]
     if cur == 'end':
         return 1
-    counts[cur] += 1
-    small = cur.lower() == cur
-    if counts[cur] == 2 and small:
-        if p_double != "" and cur != p_double:
-            counts[cur] -= 1
+    if counts[cur] == 1:
+        if cur.lower() == cur:
+            if not p_double == None and not cur == p_double:
+                return 0
+            p_double = cur
+    elif counts[cur] > 1:
+        if cur.lower() == cur:
             return 0
-        p_double = cur
-    if counts[cur] > 2 and small:
-        counts[cur] -= 1
-        return 0
+    counts[cur] += 1
     for p in dic[cur]:
         cop = path[:]     
         cop.append(p)
-        v = find_paths(cop, dic, counts, p_double)
-        tot += v
+        tot += find_paths(cop, dic, counts, p_double)
     counts[cur] -= 1
     
-    return tot
-
-def star2(nodes):
-    for n in nodes:
-        n.passed = 0
-
-    tot = nodes[0].find_path_2([])
     return tot
 
 if __name__ == '__main__':
