@@ -72,9 +72,9 @@ def find_paths(path, dic, counts, p_double):
             return 0
     counts[cur] += 1
     for p in dic[cur]:
-        cop = path[:]     
-        cop.append(p)
-        tot += find_paths(cop, dic, counts, p_double)
+        path.append(p)
+        tot += find_paths(path, dic, counts, p_double)
+        path.pop()
     counts[cur] -= 1
     
     return tot
