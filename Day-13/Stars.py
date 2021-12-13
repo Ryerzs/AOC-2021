@@ -32,21 +32,15 @@ def main():
     start_time = time.time()
     for f in folds:
         if f[0] == 0:
-            new_grid = []
-            for i in range(len(grid)//2):
-                r1 = grid[i]
-                r2 = grid[2*f[1] - i]
-                new_grid.append(np.add(r1, r2))
-            grid = new_grid
-            # grid_upper = grid[0:f[1]]
-            # grid_lower = grid[f[1]+1:]
-            # rev_lower = []
-            # for i in range(len(grid_lower)-1,-1,-1):
-            #     rev_lower.append(grid_lower[i])
-            # for i in range(len(rev_lower)):
-            #     for j in range(len(rev_lower[0])):
-            #         grid_upper[i][j] = grid_upper[i][j] or rev_lower[i][j]
-            # grid = grid_upper
+            grid_upper = grid[0:f[1]]
+            grid_lower = grid[f[1]+1:]
+            rev_lower = []
+            for i in range(len(grid_lower)-1,-1,-1):
+                rev_lower.append(grid_lower[i])
+            for i in range(len(rev_lower)):
+                for j in range(len(rev_lower[0])):
+                    grid_upper[i][j] = grid_upper[i][j] or rev_lower[i][j]
+            grid = grid_upper
         else:
             new_grid = []
             for row in grid:
