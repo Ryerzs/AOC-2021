@@ -3,6 +3,7 @@ import numpy as np
 
 def main():
     path = "data.txt"
+    # path = "test-data.txt"
     getting_points = True
     points = []
     folds = []
@@ -21,7 +22,6 @@ def main():
             else:
                 p = (int(inst[1]), 0)
             folds.append(p)
-    start_time = time.time()
     x = [p[0] for p in points]
     y = [p[1] for p in points]
     s = (max(x) + 1, max(y) + 1)
@@ -29,31 +29,46 @@ def main():
     for p in points:
         grid[p[1]][p[0]] = 1
     
+    start_time = time.time()
     for f in folds:
         if f[0] == 0:
-            grid_upper = grid[0:f[1]]
-            grid_lower = grid[f[1]+1:]
-            rev_lower = []
-            for i in range(len(grid_lower)-1,-1,-1):
-                rev_lower.append(grid_lower[i])
-            for i in range(len(rev_lower)):
-                for j in range(len(rev_lower[0])):
-                    grid_upper[i][j] = grid_upper[i][j] or rev_lower[i][j]
-            grid = grid_upper
+            # new_grid = []
+            # for i in range(f[1]):
+            #     new_grid.append(np.add(grid[i], grid[2*f[1] - i]))
+            # grid = new_grid
+            # grid_upper = grid[0:f[1]]
+            # grid_lower = grid[-1:-(f[1]+1):-1]
+
+            grid = np.add(grid[0:f[1]], grid[-1:-(f[1]+1):-1])
+            # for i in range(le(grid_lower)):
+            #     rev_lower.append(grid_lower[i])
+            # for i in range(len(rev_lower)):
+            #     for j in range(len(rev_lower[0])):
+            #         grid_upper[i][j] = grid_upper[i][j] or rev_lower[i][j]
+            # grid = grid_upper
         else:
-            grid_left = []
-            grid_right = []
-            for i in range(len(grid)):
-                grid_left.append(grid[i][0:f[0]])
-                grid_right.append(grid[i][f[0]+1:])
-            rev_right = []
-            for i in range(len(grid_right)):
-                rev_right.append(list(reversed(grid_right[i])))
-            for i in range(len(rev_right)):
-                for j in range(len(rev_right[0])):
-                    grid_left[i][j] = grid_left[i][j] or rev_right[i][j]
-            grid = grid_left
-    count = sum([sum([1 for el in row if el == 1]) for row in grid])
+            new_grid = []
+            for row in grid:
+                new_r = []
+                for (item1, item2) in zip(row[:f[0]], row[-1:-(f[0]+1):-1]):
+                    new_r.append(item1 + item2)
+                new_grid.append(new_r)
+            grid = new_grid
+
+            # grid_left = []
+            # grid_right = []
+            # for i in range(len(grid)):
+            #     grid_left.append(grid[i][0:f[0]])
+            #     grid_right.append(grid[i][f[0]+1:])
+            # rev_right = []
+            # for i in range(len(grid_right)):
+            #     rev_right.append(list(reversed(grid_right[i])))
+            # for i in range(len(rev_right)):
+            #     for j in range(len(rev_right[0])):
+            #         grid_left[i][j] = grid_left[i][j] or rev_right[i][j]
+            # grid = grid_left
+    # count = sum([sum([el > 0 for el in row]) for row in grid])
+    count = 0
 
     dt = time.time() - start_time
     print(dt)
@@ -61,7 +76,7 @@ def main():
     for row in grid:
         s = ""
         for el in row:
-            s = s + '#' * el + ' ' * (not el)
+            s = s + '#' * (not not el) + ' ' * (not el)
         print(s)
 
 if __name__ == '__main__':
