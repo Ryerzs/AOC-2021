@@ -59,7 +59,10 @@ def main():
     print(dt)
     print(count)
     for row in grid:
-        print(row)
+        s = ""
+        for el in row:
+            s = s + '#' * el + ' ' * (not el)
+        print(s)
 
 if __name__ == '__main__':
     main()
