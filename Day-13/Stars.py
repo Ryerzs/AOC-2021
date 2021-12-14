@@ -46,22 +46,9 @@ def main():
             for row in grid:
                 new_r = []
                 for (item1, item2) in zip(row[:f[0]], row[-1:-(f[0]+1):-1]):
-                    new_r.append(item1 + item2)
+                    new_r.append(item1 or item2)
                 new_grid.append(new_r)
             grid = new_grid
-
-            # grid_left = []
-            # grid_right = []
-            # for i in range(len(grid)):
-            #     grid_left.append(grid[i][0:f[0]])
-            #     grid_right.append(grid[i][f[0]+1:])
-            # rev_right = []
-            # for i in range(len(grid_right)):
-            #     rev_right.append(list(reversed(grid_right[i])))
-            # for i in range(len(rev_right)):
-            #     for j in range(len(rev_right[0])):
-            #         grid_left[i][j] = grid_left[i][j] or rev_right[i][j]
-            # grid = grid_left
     count = sum([sum([el > 0 for el in row]) for row in grid])
 
     dt = time.time() - start_time
