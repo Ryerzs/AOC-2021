@@ -5,18 +5,40 @@ from collections import defaultdict, Counter, deque
 def main():
     path = "data.txt"
     path = "test-data.txt"
-    seq = ""
+    seq = []
     inst = {}
     counts = {}
+    dict_counter = 0
+    lett_dict = {}
     for row in open(path, 'r').read().splitlines():
         if not seq:
-            seq = row
+            for c in row:
+                if c not in lett_dict:
+                    lett_dict[c] = dict_counter
+                    dict_counter += 1
+                seq.append(lett_dict[c])
             continue
         if row:
             r = row.split(' -> ')
-            inst[(r[0][0], r[0][1])] = r[1]
-            if r[1] not in counts:
-                counts[r[1]] = 0
+            c1 = r[0][0]
+            c2 = r[0][1]
+            c3 = r[1]
+            if c1 not in lett_dict:
+                lett_dict[c1] = dict_counter
+                dict_counter += 1
+            if c2 not in lett_dict:
+                lett_dict[c2] = dict_counter
+                dict_counter += 1
+            if c3 not in lett_dict:
+                lett_dict[c3] = dict_counter
+                dict_counter += 1
+            i1 = lett_dict[c1]
+            i2 = lett_dict[c2]
+            i3 = lett_dict[c3]
+            inst[(i1, i2)] = i3
+            
+            if i3 not in counts:
+                counts[i3] = 0
     start_time = time.time()
     Q = deque([])
     for i in range(len(seq) -1):
