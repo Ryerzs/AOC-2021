@@ -43,25 +43,62 @@ def main():
     Q = deque([])
     for i in range(len(seq) -1):
         Q.append((seq[i], seq[i+1]))
-    last = seq[-1]
-    l = len(seq)
+    
     N = 20
-    p = 2**N
-    for i in range((p-1)*l - p):
-        sub = Q.popleft()
-        Q.append((sub[0], inst[sub]))
-        Q.append((inst[sub], sub[1]))
-    for sub in Q:
-        counts[sub[0]] += 1
-    counts[last] += 1
-    print(counts)
+    seq_1 = Q.popleft()
+    last = seq_1[-1]
+    cache = {}
+    count_1 = counts.copy()
+    if seq_1 in cache:
+        c = cache[seq_1][0]
+    else:
+        depth_search(seq_1, inst, count_1, 0, 1)
+
+
+    dt = time.time() - start_time
+    print(dt)
+    return
+    for seq_1 in Q:
+        depth_search(seq_1, inst, counts, 0, N)
+        counts[seq_1[1]] += 1
+    print_max_min(counts)
+    dt = time.time() - start_time
+    print(dt)
+    return
+    # last = seq[-1]
+    # l = len(seq)
+    # N = 20
+    # p = 2**N
+    # for i in range((p-1)*l - p):
+    #     sub = Q.popleft()
+    #     Q.append((sub[0], inst[sub]))
+    #     Q.append((inst[sub], sub[1]))
+    # for sub in Q:
+    #     counts[sub[0]] += 1
+    # counts[last] += 1
+    # print(counts)
+    # ma = counts[max(counts, key=counts.get)]
+    # mi = counts[min(counts, key=counts.get)]
+    # print(ma, mi)
+    # print(ma - mi)
+
+    # dt = time.time() - start_time
+    # print(dt)
+
+def depth_search(seq, inst, counts, depth, N):
+    if depth == N:
+        counts[seq[0]] += 1
+        return
+    depth_search((seq[0], inst[seq]), inst, counts, depth + 1, N)
+    depth_search((inst[seq], seq[1]), inst, counts, depth + 1, N)
+    return
+
+def print_max_min(counts):
     ma = counts[max(counts, key=counts.get)]
     mi = counts[min(counts, key=counts.get)]
     print(ma, mi)
     print(ma - mi)
-
-    dt = time.time() - start_time
-    print(dt)
+    return (ma - mi)
 
 if __name__ == '__main__':
     main()
