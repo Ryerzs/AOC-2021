@@ -5,6 +5,7 @@ def main():
     path = "data.txt"
     # path = "test-data1.txt"
     # path = "test-data2.txt"
+    # path = "test-data3.txt"
     data = [bin(int(row, 16))[2:].zfill(len(row)*4) for row in 
                 open(path, 'r').read().splitlines()]
     start_time = time.time()
@@ -70,6 +71,7 @@ def unravel_inp(inp):
                 num.append(unraveled)
             cur_len += l
             rest = rest[l:]
+        num = perform_operation(num, type_id)
         tot_len = 22 + cur_len
     else:
         length = int(inp[7:18], 2)
@@ -82,9 +84,44 @@ def unravel_inp(inp):
                 num.append(unraveled)
             ver += v
             rest = rest[l:]
+        num = perform_operation(num, type_id)
         tot_len = 18 + cur_len
     return num, ver, tot_len
 
+def perform_operation(num, op):
+    s = 0
+    if op == 0:
+        for n in num:
+            s += n
+    if op == 1:
+        s = 1
+        for n in num:
+            s *= n
+    if op == 2:
+        s = num[0]
+        for n in num:
+            if n < s:
+                s = n
+    if op == 3:
+        s = num[0]
+        for n in num:
+            if n > s:
+                s = n
+    if op == 5:
+        n1 = num[0]
+        n2 = num[1]
+        s = int(n1 > n2)
+
+    if op == 6:
+        n1 = num[0]
+        n2 = num[1]
+        s = int(n1 < n2)
+
+    if op == 7:
+        n1 = num[0]
+        n2 = num[1]
+        s = int(n1 == n2)
+    return s
 
 def star1():
     return 0
