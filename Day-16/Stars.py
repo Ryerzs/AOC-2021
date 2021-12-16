@@ -1,17 +1,12 @@
 import time
-import numpy as np
 
 def main():
     path = "data.txt"
-    # path = "test-data1.txt"
-    # path = "test-data2.txt"
-    # path = "test-data3.txt"
     data = [bin(int(row, 16))[2:].zfill(len(row)*4) for row in 
                 open(path, 'r').read().splitlines()]
     start_time = time.time()
 
     num = []
-    oper = []
     ver = []
     for inp in data:
         unraveled, v, _ = unravel_inp(inp)
@@ -23,16 +18,10 @@ def main():
             if type(u) == int:
                 num.append(u)
 
+    dt = time.time() - start_time
     print(num)
     print(ver)
-
-    ans1 = star1()
-    ans2 = star2()
-
-    dt = time.time() - start_time
     print(dt)
-    print("Star 1:", ans1)
-    print("Star 2:", ans2)
 
 def literal(inp):
     last = False
@@ -48,17 +37,14 @@ def literal(inp):
     return num, ind
 
 def unravel_inp(inp):
-    oper = []
     num = []
     header = int(inp[0:3], 2)
     ver = header
     type_id = int(inp[3:6], 2)
-    print(header, type_id)
     if type_id == 4:
         num, l = literal(inp)
         return num, ver, l
     length_id = int(inp[6:7])
-    print(length_id)
     if length_id == 0:
         # The length bits are 15 bits
         cur_len = 0
@@ -93,41 +79,33 @@ def perform_operation(num, op):
     if op == 0:
         for n in num:
             s += n
-    if op == 1:
+    elif op == 1:
         s = 1
         for n in num:
             s *= n
-    if op == 2:
+    elif op == 2:
         s = num[0]
         for n in num:
             if n < s:
                 s = n
-    if op == 3:
+    elif op == 3:
         s = num[0]
         for n in num:
             if n > s:
                 s = n
-    if op == 5:
+    elif op == 5:
         n1 = num[0]
         n2 = num[1]
         s = int(n1 > n2)
-
-    if op == 6:
+    elif op == 6:
         n1 = num[0]
         n2 = num[1]
         s = int(n1 < n2)
-
-    if op == 7:
+    elif op == 7:
         n1 = num[0]
         n2 = num[1]
         s = int(n1 == n2)
     return s
-
-def star1():
-    return 0
-
-def star2():
-    return 0
 
 if __name__ == '__main__':
     main()
