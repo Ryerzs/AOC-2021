@@ -47,34 +47,28 @@ def main():
     start = board.grid[0][0]
     end = board.grid[board.s[0]-1][board.s[1]-1]
     openSet = deque([start])
-    gScore = {}
-    fScore = {}
     for i in range(board.s[0]):
         for j in range(board.s[1]):
-            gScore[board.grid[i][j]] = board.s[0] * board.s[1] * 10
-            fScore[board.grid[i][j]] = 2 * ((board.s[0] * board.s[1])**2) * 10
-    cameFrom = {}
-    gScore[start] = 0
-    fScore[start] = h(start, end)
+            board.grid[i][j].gScore = board.s[0] * board.s[1] * 10
+            board.grid[i][j].fScore = 2 * ((board.s[0] * board.s[1])**2) * 10
+    start.gScore = 0
+    start.fScore = h(start, end)
     path = None
     while openSet:
         current = openSet[0]
         for node in openSet:
-            if fScore[node] < fScore[current]:
+            if node.fScore < current.fScore:
                 current = node
         if current == end:
-            path = reconstruct_path(cameFrom, current)
+            path = reconstruct_path(current)
             break
-    
-        # print(current.ind)
-        # current.print_neighbors()
         openSet.remove(current)
         for n in current.neigh:
-            tentative_gScore = gScore[current] + n.val   
-            if tentative_gScore < gScore[n]:
-                cameFrom[n] = current
-                gScore[n] = tentative_gScore
-                fScore[n] = tentative_gScore + h(n, end)
+            tentative_gScore = current.gScore + n.val   
+            if tentative_gScore < n.gScore:
+                n.cameFrom = current
+                n.gScore = tentative_gScore
+                n.fScore = tentative_gScore + h(n, end)
                 if n not in openSet:
                     openSet.append(n)
     print_path(path)
@@ -82,7 +76,7 @@ def main():
     for row in grid:
         print(''.join(row))
     
-    print(gScore[end])
+    print(end.gScore)
 
     ans1 = star1()
     ans2 = star2()
@@ -113,10 +107,10 @@ def print_path(path):
 def h(node, end):
     return abs(node.ind[0] - end.ind[0]) + abs(node.ind[1] - end.ind[1])
 
-def reconstruct_path(cameFrom, current):
+def reconstruct_path(current):
     total_path = deque([current])
-    while current in cameFrom:
-        current = cameFrom[current]
+    while current.cameFrom is not None:
+        current = current.cameFrom
         total_path.appendleft(current)
     return total_path
 

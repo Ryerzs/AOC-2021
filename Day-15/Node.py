@@ -3,6 +3,9 @@ class Node():
         self.ind = ind
         self.neigh = []
         self.val = val
+        self.cameFrom = None
+        self.gScore = 0
+        self.fScore = 0
     
     def add_negihbors(self, neigh):
         for n in neigh:
