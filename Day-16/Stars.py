@@ -2,21 +2,14 @@ import time
 
 def main():
     path = "data.txt"
+    start_time = time.time()
     data = [bin(int(row, 16))[2:].zfill(len(row)*4) for row in 
                 open(path, 'r').read().splitlines()]
-    start_time = time.time()
 
-    num = []
-    ver = []
-    for inp in data:
-        unraveled, v, _ = unravel_inp(inp)
-        ver.append(v)
-        if type(unraveled) == int:
-            num.append(unraveled)
-            continue
-        for u in unraveled:
-            if type(u) == int:
-                num.append(u)
+    inp = data[0]
+    unraveled, ver, _ = unravel_inp(inp)
+    if type(unraveled) == int:
+        num = unraveled
 
     dt = time.time() - start_time
     print(num)
@@ -46,7 +39,7 @@ def unravel_inp(inp):
         return num, ver, l
     length_id = int(inp[6:7])
     if length_id == 0:
-        # The length bits are 15 bits
+        # The length bits is 15 bits
         cur_len = 0
         length = int(inp[7:22], 2)
         rest = inp[22:]
@@ -60,6 +53,7 @@ def unravel_inp(inp):
         num = perform_operation(num, type_id)
         tot_len = 22 + cur_len
     else:
+        # The length bits is 11 bits
         length = int(inp[7:18], 2)
         rest = inp[18:]
         cur_len = 0
