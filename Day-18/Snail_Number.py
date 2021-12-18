@@ -122,16 +122,16 @@ class Snail_Number():
             return (child.dir, leftv)
 
     def add_left_most(self, val):
-        if self.isVal:
-            self.val += val
-            return
-        self.children[0].add_left_most(val)
+        self.add_side_most(val, 0)
 
     def add_right_most(self, val):
+        self.add_side_most(val, 1)
+    
+    def add_side_most(self, val, side: int):
         if self.isVal:
             self.val += val
             return
-        self.children[1].add_right_most(val)
+        self.children[side].add_side_most(val, side = side)
     
     def print_self_and_children(self):
         if self.isVal:

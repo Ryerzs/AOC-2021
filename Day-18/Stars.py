@@ -3,22 +3,28 @@ from Snail_Number import *
 
 def main():
     path = "data.txt"
-    path = "test-data1.txt"
     data = []
+    start_time = time.perf_counter()
     with open(path) as f:
         rows = f.read().splitlines()
         for r in rows:
             data.append(Snail_Number(split_to_array(r)))
-    start_time = time.perf_counter()
+    time1 = time.perf_counter()
 
     ans1 = star1(data)
-    ans2 = 0
+    time2 = time.perf_counter()
     ans2 = star2(data)
+    time3 = time.perf_counter()
 
-    dt = time.perf_counter() - start_time
-    print(dt)
-    print("Star 1:", ans1)
-    print("Star 2:", ans2)
+    load_time = time1 - start_time
+    star1_time = time2 - time1
+    star2_time = time3 - time2
+    if 1:
+        print(f'Load time: {load_time}')
+        print(f'Star 1 time: {star1_time}')
+        print(f'Star 2 time: {star2_time}')
+        print(f'Star 1 answer: {ans1}')
+        print(f'Star 2 answer: {ans2}')
 
 def split_to_array(row):
     if row.isnumeric():
@@ -73,7 +79,6 @@ def star2(data):
             sn.reduce()
             magnitude = sn.get_magnitude()
             highest = max(magnitude, highest)
-
     return highest
 
 if __name__ == '__main__':
