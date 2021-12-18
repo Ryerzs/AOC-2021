@@ -1,14 +1,21 @@
+import copy
+from Performed_Action import *
 class Snail_Number():
-    def __init__(self, inp: 'list', depth: int = 1, direction: int = None):
+    def __init__(self, inp: 'list', depth: int = 1, direction: int = 0, performed_action = None):
         self.depth = depth
         self.children = []
         self.isVal = False
         self.performed = False
         self.val = 0
+        if performed_action is None:
+            self.performed_action = Performed_Action(False)
+        else:
+            self.performed_action = performed_action
         # 0 -> Left
         # 1 -> Right
         self.dir = direction
-        self.parse_children(inp)
+        if inp != []:
+            self.parse_children(inp)
     
     # Takes list 
     def parse_children(self, inp: 'list'):
@@ -17,7 +24,7 @@ class Snail_Number():
             self.isVal = True
             return
         for i, iv in enumerate(inp):
-            self.children.append(Snail_Number(iv, self.depth + 1, i))
+            self.children.append(Snail_Number(iv, self.depth + 1, i, self.performed_action))
     
     # Stabilizes snail number
     def reduce(self):
@@ -27,12 +34,16 @@ class Snail_Number():
         So it explodes until it can't anymore, and then tries to split.
         Then it tries exploding again, and so on.
         """
-        self.performed = True
-        while self.performed_action():
-            self.reset_performed()
+        self.performed_action.setState(True)
+        while self.performed_action.getState():
+            # if not run:
+            #     self.reset_performed()
+            self.performed_action.setState(False)
+            print('äexplide')
             self.try_explode()
             # If it couldn't explode, try splitting
-            if not self.performed_action():
+            if not self.performed_action.getState():
+                print('split')
                 self.try_split()
 
     # Tries to explode snail numbers from left to right
@@ -41,7 +52,7 @@ class Snail_Number():
         # If we are deep enough and have reached a number pair
         # then we explode
         if self.depth > 4 and self.children_are_values():
-            self.performed = True
+            self.performed_action.setState(True)
             return 'explode'
         # Loop through children and see if they explode
         for cv in self.children:
@@ -80,19 +91,18 @@ class Snail_Number():
             self.isVal = False
             for i, iv in enumerate(inp):
                 self.children.append(Snail_Number(iv, self.depth + 1, i))
-            self.performed = True
+            self.performed_action.setState(True)
             return True
 
         for cv in self.children:
             if cv.try_split():
                 return True
+        return False
     
     def performed_action(self):
         if self.performed:
             return True
         for cv in self.children:
-            if cv.performed:
-                return True
             if cv.performed_action():
                 return True
         return False
@@ -111,7 +121,7 @@ class Snail_Number():
     def explode_child(self, child):
         leftv = child.children[0].val
         rightv = child.children[1].val
-        child.children = []
+        child.children.clear()
         child.isVal = True
         child.val = 0
         if child.dir:
@@ -162,14 +172,9 @@ class Snail_Number():
         for cv in self.children:
             if cv.isVal:
                 arr.append(cv.val)
-            else:
-                arr.append(cv.get_array())
+                continue
+            arr.append(cv.get_array())
         return arr
-
-    def add_snail(self, sn):
-        arr1 = self.get_array()
-        arr2 = sn.get_array()
-        return Snail_Number([arr1, arr2])
     
     def get_magnitude(self):
         if self.isVal:
@@ -180,3 +185,14 @@ class Snail_Number():
         if self.depth == 1:
             return v
         return v * (3 - self.dir)
+
+    def add_snail(self, second_snail):
+        arr1 = self.get_array()
+        arr2 = second_snail.get_array()
+        return Snail_Number([arr1, arr2])
+    
+    def printDepths(self):
+        print(self.depth)
+        for cv in self.children:
+            cv.printDepths()
+    

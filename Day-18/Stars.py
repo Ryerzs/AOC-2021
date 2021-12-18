@@ -3,6 +3,7 @@ from Snail_Number import *
 
 def main():
     path = "data.txt"
+    # path = "test-data1.txt"
     data = []
     start_time = time.perf_counter()
     with open(path) as f:
