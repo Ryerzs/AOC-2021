@@ -1,16 +1,12 @@
 import copy
 from Performed_Action import *
 class Snail_Number():
-    def __init__(self, inp: 'list', depth: int = 1, direction: int = 0, performed_action = None):
+    def __init__(self, inp: 'list', depth: int = 1, direction: int = 0):
         self.depth = depth
         self.children = []
         self.isVal = False
         self.performed = False
         self.val = 0
-        if performed_action is None:
-            self.performed_action = Performed_Action(False)
-        else:
-            self.performed_action = performed_action
         # 0 -> Left
         # 1 -> Right
         self.dir = direction
@@ -24,7 +20,7 @@ class Snail_Number():
             self.isVal = True
             return
         for i, iv in enumerate(inp):
-            self.children.append(Snail_Number(iv, self.depth + 1, i, self.performed_action))
+            self.children.append(Snail_Number(iv, self.depth + 1, i))
     
     # Stabilizes snail number
     def reduce(self):
@@ -34,17 +30,15 @@ class Snail_Number():
         So it explodes until it can't anymore, and then tries to split.
         Then it tries exploding again, and so on.
         """
-        self.performed_action.setState(True)
-        while self.performed_action.getState():
-            # if not run:
-            #     self.reset_performed()
-            self.performed_action.setState(False)
-            print('äexplide')
+        run = True
+        while self.performed_action() or run:
+            if not run:
+                self.reset_performed()
+            run = False
             self.try_explode()
             # If it couldn't explode, try splitting
-            if not self.performed_action.getState():
-                print('split')
-                self.try_split()
+            if not self.performed_action():
+                run = self.try_split()
 
     # Tries to explode snail numbers from left to right
     def try_explode(self):
@@ -52,7 +46,7 @@ class Snail_Number():
         # If we are deep enough and have reached a number pair
         # then we explode
         if self.depth > 4 and self.children_are_values():
-            self.performed_action.setState(True)
+            self.performed = True
             return 'explode'
         # Loop through children and see if they explode
         for cv in self.children:
@@ -91,7 +85,6 @@ class Snail_Number():
             self.isVal = False
             for i, iv in enumerate(inp):
                 self.children.append(Snail_Number(iv, self.depth + 1, i))
-            self.performed_action.setState(True)
             return True
 
         for cv in self.children:
