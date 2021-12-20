@@ -32,11 +32,9 @@ def main():
         print(f'Star 2 answer: {ans2}')
 
 def test(data):
-    a = [1,2,3,4,5]
-    for i, av in enumerate(a):
-        print(i)
-        i = i + 1
-        print(i)
+    a = np.array([[1,2],[3,4]])
+    b = np.array([2,1])
+    print(a + b)
     exit()
 
 def matSort(mat, col:int = 0, variant:int = 0, s:int = 2):
@@ -83,7 +81,7 @@ def stringPointToIntPoint(string):
 
 
 def star1(data):
-    allRelative = []
+    relativeScannerDist = {}
     trans = getAllTransformations()
     transInv = inv(trans)
     base0 = {}
@@ -93,41 +91,42 @@ def star1(data):
     base = data[0]
     otherSensors = data[1:]
     while otherSensors:
-        dTrans = transformMatrix(base, trans)
-        relativePositions = []
-        for k, dv in enumerate(otherSensors):
-            for i, dT in enumerate(dTrans):
-                relativePos = getRelativePositions(dT, dv, transInv, i, k)
-                if relativePos != []:
-                    relativePositions.append(relativePos)
-                    break
-        relativePositions, data, base0 = transformData(relativePositions, data, transInv, j, base0)
-        allRelative.append(relativePositions)
-    c = 0
-    for i, rp in enumerate(allRelative):
-        for r in rp:
-            print(i, r[0], r[2])
-            c+= 1
-        print('----')
-    print(c)
-    zero = np.array([0,0,0])
-    pointsTo = {}
-    pointsTo[0] = zero
-    for i in range(1,len(data)):
-        pointsTo[i] = []
-    useRelative(allRelative, allRelative[0], 0, pointsTo)
-    # for key, val in pointsTo.items():
-    #     print(key, val)
-    beacons = findAllBeacons(data, pointsTo)
+        base, otherSensors = findNextBase(base, otherSensors, trans, transInv)
+    print(len(base))
+    beacons = findAllBeacons(base)
     print(len(beacons))
     return 0
 
-def findAllBeacons(data, pointsTo):
+def findNextBase(base, otherSensors, trans, transInv):
+    dTrans = transformMatrix(base, trans)
+    relativePositions = []
+    for k, dv in enumerate(otherSensors):
+        relative = isRelativeTo(dTrans, dv, transInv, k)
+        if relative != []:
+            base, otherSensors = mergeToBase(base, otherSensors, transInv, k, relative)
+            break
+    return base, otherSensors
+
+def mergeToBase(base, otherSensors, transInv, k, rel):
+    off = rel[0]
+    t = rel[1]
+    other = np.matmul(otherSensors[k], transInv[t]) + off
+    base = np.concatenate((base, other))
+    otherSensors = otherSensors[:k] + otherSensors[k+1:]
+    return base, otherSensors
+
+def isRelativeTo(dTrans, dv, transInv, k):
+    for i, dT in enumerate(dTrans):
+        relativePos = getRelativePositions(dT, dv, transInv, i, k)
+        if relativePos != []:
+            return relativePos
+    return []
+
+def findAllBeacons(data):
     beacons = {}
     for i, d in enumerate(data):
-        for p in d:
-            coord = p + pointsTo[i]
-            beacons[tuple(coord)] = 1
+        coord = tuple(d)
+        beacons[coord] = 1
     return beacons
 
 def transformData(rel, data, transInv, j, base0):
