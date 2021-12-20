@@ -4,21 +4,17 @@ from collections import Counter
 
 def main():
     path = "data.txt"
-    path = "test-data1.txt"
-    # path = "test-data.txt"
-    # path = "test-data2.txt"
+    # path = "test-data1.txt"
 
     start_time = time.perf_counter()
     data = getData(path)
 
-    # test(data)
-
     time1 = time.perf_counter()
 
-    ans1 = star1(data)
+    ans1, scanners = star1(data)
     time2 = time.perf_counter()
 
-    ans2 = star2(data)
+    ans2 = star2(scanners)
     time3 = time.perf_counter()
 
     load_time = time1 - start_time
@@ -49,7 +45,6 @@ def matSort(mat, col:int = 0, variant:int = 0, s:int = 2):
     m = m[np.lexsort(mSort)]
     return m
 
-
 def getData(path):
     with open(path) as f:
         rows = f.read().splitlines()
@@ -79,39 +74,42 @@ def appendIfNotEmpty(list, listAppend):
 def stringPointToIntPoint(string):
     return [int(sv) for sv in string.split(',')]
 
-
 def star1(data):
-    relativeScannerDist = {}
     trans = getAllTransformations()
     transInv = inv(trans)
-    base0 = {}
-    for i in range(len(data)):
-        base0[i] = False
-    base0[0] = True
     base = data[0]
     otherSensors = data[1:]
-    while otherSensors:
-        base, otherSensors = findNextBase(base, otherSensors, trans, transInv)
-    print(len(base))
-    beacons = findAllBeacons(base)
-    print(len(beacons))
-    return 0
 
-def findNextBase(base, otherSensors, trans, transInv):
+    scanners = {}
+    scanners[0] = np.array([0,0,0])
+    beacons = {}
+    for p in base:
+        beacons[tuple(p)] = 1
+    while otherSensors:
+        base, otherSensors =findNextBase(
+            base, otherSensors, trans, transInv, beacons, scanners)
+    return len(base), scanners
+
+def findNextBase(base, otherSensors, trans, transInv, beacons, scanners):
     dTrans = transformMatrix(base, trans)
-    relativePositions = []
     for k, dv in enumerate(otherSensors):
         relative = isRelativeTo(dTrans, dv, transInv, k)
         if relative != []:
-            base, otherSensors = mergeToBase(base, otherSensors, transInv, k, relative)
+            base, otherSensors = mergeToBase(base, otherSensors, transInv, k, relative, beacons)
+            scanners[len(scanners)] = relative[0]
             break
     return base, otherSensors
 
-def mergeToBase(base, otherSensors, transInv, k, rel):
+def mergeToBase(base, otherSensors, transInv, k, rel, beacons):
     off = rel[0]
     t = rel[1]
+    appending = []
     other = np.matmul(otherSensors[k], transInv[t]) + off
-    base = np.concatenate((base, other))
+    for p in other:
+        if tuple(p) not in beacons:
+            appending.append(p)
+            beacons[tuple(p)] = 1
+    base = np.concatenate((base, appending))
     otherSensors = otherSensors[:k] + otherSensors[k+1:]
     return base, otherSensors
 
@@ -121,37 +119,6 @@ def isRelativeTo(dTrans, dv, transInv, k):
         if relativePos != []:
             return relativePos
     return []
-
-def findAllBeacons(data):
-    beacons = {}
-    for i, d in enumerate(data):
-        coord = tuple(d)
-        beacons[coord] = 1
-    return beacons
-
-def transformData(rel, data, transInv, j, base0):
-    for r in rel:
-        ind = r[2]
-        t = r[1]
-        if not base0[ind]:
-            data[ind] = np.matmul(data[ind], transInv[t])
-        base0[ind] = True
-    return rel, data, base0
-
-
-def useRelative(ar, cur, i, pointsTo):
-    for r in cur:
-        ind = r[2]
-        if pointsTo[ind] == []:
-            pointsTo[ind] = r[0] + pointsTo[i]
-            useRelative(ar, ar[ind], ind, pointsTo)
-    # for i, rel in enumerate(ar):
-    #     pointsToIndex = []
-    #     for r in rel:
-    #         pointsToIndex.append((r[0], r[1], r[2]))
-    #     pointsTo[i] = pointsToIndex
-    # for key, val in pointsTo.items():
-    #     print(key, val)
 
 def transformMatrix(d, trans):
     dTrans = []
@@ -172,7 +139,6 @@ def getRelativePositions(dT, dv, transInv, i, k):
             if relativeDistances[diff] == 12:
                 orig = np.array(diff, dtype=int)
                 orig = np.matmul(diff, transInv[i])
-                # relativePositions.append([orig, relativeDistances[diff], k])
                 relativePositions = [orig, i, k]
                 break
     return relativePositions
@@ -226,10 +192,15 @@ def getAllTransformations():
             transformations.append(np.matmul(z, xy))
     return transformations
 
-
-
 def star2(data):
-    return 0
+    highest = 0
+    for _, d1 in data.items():
+        for _, d2 in data.items():
+            diff = d1 - d2
+            diffSum = abs(diff[0]) + abs(diff[1]) + abs(diff[2])
+            if diffSum > highest:
+                highest = diffSum
+    return highest
 
 if __name__ == '__main__':
     main()
