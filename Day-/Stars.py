@@ -29,7 +29,7 @@ def main():
         print(f'Star 1 answer: {ans1}')
         print(f'Star 2 answer: {ans2}')
 
-def star1():
+def star1(data):
     return 0
 
 def star2():
