@@ -57,35 +57,37 @@ def rollDice(dice, rollCount, n):
     return dice, rollCount, s
 
 def star2(p1, p2):
-    outcomes1 = {}
-    outcomes2 = {}
-    outcomes1[(0, p1)] = 1
-    outcomes2[(0, p2)] = 1
     players = deque([])
-    players.append([outcomes1, 1, 0])
-    players.append([outcomes2, 1, 0])
-    N = 30
-    prevUniv = 1
-    for i in range(N):
+    players.append(createUniversePlayer(p1, 1, 0))
+    players.append(createUniversePlayer(p2, 1, 0))
+    N = 20
+    prevUniverseSize = 1
+    while 1:
         p = players.popleft()
-        universeSplit(p, prevUniv)
-        prevUniv = p[1]
+        universeSplit(p, prevUniverseSize)
+        prevUniverseSize = p[1]
         players.append(p)
+        if not p[0]:
+            break
     return max(players[0][2], players[1][2])
 
-def universeSplit(p, univ2):
+def universeSplit(p, otherUniverseSize):
     p[0] = diraqStep(p[0])
     p[1] *= 27
     newOutcomes = copy.deepcopy(p[0])
-    newWon = 0
+    wonUniverses = 0
     for key, val in p[0].items():
         if key[0] >= 21:
-            newWon += val
+            wonUniverses += val
             del newOutcomes[key]
-    p[2] += newWon * univ2
-    p[1] -= newWon
+    p[2] += wonUniverses * otherUniverseSize
+    p[1] -= wonUniverses
     p[0] = newOutcomes
-    
+
+def createUniversePlayer(p, universeSize, startSum):
+    outcomes = {}
+    outcomes[(0, p)] = 1
+    return [outcomes, universeSize, startSum]
 
 def diraqStep(outcomes):
     poss = {}
@@ -97,15 +99,18 @@ def diraqStep(outcomes):
     poss[8] = 3
     poss[9] = 1
     newOutcomes = {}
-    for key1, val1 in outcomes.items():
-        for key2, val2 in poss.items():
-            p = (key1[1] + key2 - 1)%10 +1
-            s = key1[0] + p
-            if (s, p) not in newOutcomes:
-                newOutcomes[(s, p)] = val1*val2
+    for key, universes in outcomes.items():
+        for newStep, occurunces in poss.items():
+            prevSum = key[0]
+            prevStep = key[1]
+            step = (prevStep + newStep - 1)%10 +1
+            s = prevSum + step
+            sumStepPair = (s, step)
+            if sumStepPair not in newOutcomes:
+                newOutcomes[sumStepPair] = universes*occurunces
                 continue
-            old = newOutcomes[(s, p)]
-            newOutcomes[(s, p)] = old + val1*val2
+            oldValue = newOutcomes[sumStepPair]
+            newOutcomes[sumStepPair] = oldValue + universes*occurunces
     return newOutcomes
 
 if __name__ == '__main__':
