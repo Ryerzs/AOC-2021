@@ -4,9 +4,7 @@ from collections import deque
 
 def main():
     path = "data.txt"
-    # path = "test-data.txt"
 
-    data = []
     start_time = time.perf_counter()
     with open(path) as f:
         rows = f.read().splitlines()
