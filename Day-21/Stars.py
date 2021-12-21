@@ -61,21 +61,16 @@ def star2(p1, p2):
     outcomes2 = {}
     outcomes1[(0, p1)] = 1
     outcomes2[(0, p2)] = 1
-    N = 30
-    won1 = 0
-    won2 = 0
-    univ1 = 1
-    univ2 = 1
     players = deque([])
-    players.append([outcomes1, univ1, won1])
-    players.append([outcomes2, univ2, won2])
+    players.append([outcomes1, 1, 0])
+    players.append([outcomes2, 1, 0])
+    N = 30
     prevUniv = 1
     for i in range(N):
         p = players.popleft()
         universeSplit(p, prevUniv)
         prevUniv = p[1]
         players.append(p)
-
     return max(players[0][2], players[1][2])
 
 def universeSplit(p, univ2):
