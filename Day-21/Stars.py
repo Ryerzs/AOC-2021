@@ -1,5 +1,6 @@
 import time
 import copy
+from collections import deque
 
 def main():
     path = "data.txt"
@@ -11,8 +12,6 @@ def main():
         rows = f.read().splitlines()
         p1 = int(rows[0][0])
         p2 = int(rows[0][1])
-    
-    # test()
 
     time1 = time.perf_counter()
 
@@ -31,48 +30,29 @@ def main():
         print(f'Star 2 time: {star2_time}')
         print(f'Star 1 answer: {ans1}')
         print(f'Star 2 answer: {ans2}')
-    print(ans2)
-    print(444356092776315 + 341960390180808)
-
-def test():
-    arr = [1,2,3]
-    counts = {}
-    for v1 in arr:
-        for v2 in arr:
-            for v3 in arr:
-                s = v1 + v2 + v3
-                if s not in counts:
-                    counts[s] = 1
-                    continue
-                counts[s] += 1
-    for key, val in counts.items():
-        print(key, val)
-    exit()
 
 def star1(p1, p2):
     rollCount = 0
     dice = 0
-    s1 = 0
-    s2 = 0
-    while s1 < 1000 and s2 < 1000:
+    players = deque([])
+    players.append([p1, 0])
+    players.append([p2, 0])
+    while players:
+        p = players.popleft()
         dice, rollCount, s = rollDice(dice, rollCount, 3)
-        p1 = (p1 + s - 1) % 10 + 1
-        s1 += p1
-        if s1 >= 1000:
-            break
-        dice, rollCount, s = rollDice(dice, rollCount, 3)
-        p2 = (p2 + s - 1) % 10 + 1
-        s2 += p2
-    loser = min(s1, s2)
-    return loser * rollCount
+        p[0] = (p[0] + s - 1) % 10 + 1
+        p[1] += p[0]
+        if p[1] < 1000:
+            players.append(p)
+            continue
+        loser = players.popleft()
+    return loser[1] * rollCount
 
 def rollDice(dice, rollCount, n):
     s = 0
+    rollCount += n
     for i in range(n):
-        rollCount += 1
-        dice += 1
-        if dice > 100:
-            dice = 1
+        dice = dice % 100 + 1
         s += dice
     return dice, rollCount, s
 
@@ -81,51 +61,36 @@ def star2(p1, p2):
     outcomes2 = {}
     outcomes1[(0, p1)] = 1
     outcomes2[(0, p2)] = 1
-    N = 11
+    N = 30
     won1 = 0
     won2 = 0
     univ1 = 1
     univ2 = 1
+    players = deque([])
+    players.append([outcomes1, univ1, won1])
+    players.append([outcomes2, univ2, won2])
+    prevUniv = 1
     for i in range(N):
-        outcomes1 = diraqStep(outcomes1)
-        univ1 *= 27
-        newOutcomes1 = copy.deepcopy(outcomes1)
-        newWon1 = 0
-        newLen = 0
-        for key, val in outcomes1.items():
-            newLen += val
-        if univ1 == newLen:
-            print(i, univ1)
-        for key, val in outcomes1.items():
-            if key[0] >= 21:
-                newWon1 += val
-                del newOutcomes1[key]
-        # for key, val in outcomes1.items():
-        #     print(key, val)
-        # print('----')
-        won1 += newWon1 * univ2
-        univ1 -= newWon1
-        outcomes1 = newOutcomes1
-        outcomes2 = diraqStep(outcomes2)
-        univ2 *= 27
-        newOutcomes2 = copy.deepcopy(outcomes2)
-        newWon2 = 0
-        for key, val in outcomes2.items():
-            if key[0] >= 21:
-                newWon2 += val
-                del newOutcomes2[key]
-        won2 += newWon2 * univ1
-        univ2 -= newWon2
-        outcomes2 = newOutcomes2
-    outcomes1 = newOutcomes1
-    for key, val in outcomes1.items():
-        print(key, val)
-    print('----')
-    for key, val in outcomes2.items():
-        print(key, val)
-    print(won1)
-    print(won2)
-    return won1 + won2
+        p = players.popleft()
+        universeSplit(p, prevUniv)
+        prevUniv = p[1]
+        players.append(p)
+
+    return max(players[0][2], players[1][2])
+
+def universeSplit(p, univ2):
+    p[0] = diraqStep(p[0])
+    p[1] *= 27
+    newOutcomes = copy.deepcopy(p[0])
+    newWon = 0
+    for key, val in p[0].items():
+        if key[0] >= 21:
+            newWon += val
+            del newOutcomes[key]
+    p[2] += newWon * univ2
+    p[1] -= newWon
+    p[0] = newOutcomes
+    
 
 def diraqStep(outcomes):
     poss = {}
