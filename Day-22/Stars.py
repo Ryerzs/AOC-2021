@@ -18,7 +18,8 @@ def main():
     ans1 = star1(data)
     time2 = time.perf_counter()
 
-    ans2 = star2(data)
+    # ans2 = star2(data)
+    ans2 = newStar2(data)
     time3 = time.perf_counter()
 
     load_time = time1 - start_time
@@ -144,6 +145,54 @@ def getNewRange(r1, r2):
         return [r1[0], r2[0] - 1]
     if r1[0] <= r2[1] <= r1[1]:
         return [r2[1] + 1, r1[1]]
+
+def newStar2(data):
+    boxes = []
+    for inst in data:
+        val = inst[0]
+        ranges = inst[1]
+        boxes.append(Box(val, ranges))
+    print(boxes[0].getVolume())
+    print(boxes[1].getVolume())
+    newBoxes = createNewBoxesFromCutout(boxes[0], boxes[1])
+
+def createNewBoxesFromCutout(box1, box2):
+    insideCorners2 = getCornersInside(box1, box2)
+    insideCorners1 = getCornersInside(box2, box1)
+    newCutout = createBoxFromCorners(insideCorners1[0], insideCorners2[0])
+    print(insideCorners2)
+    print(insideCorners1)
+    print(newCutout.getVolume())
+    pass
+
+def createBoxFromCorners(c1, c2):
+    lowX = min(c1[0], c2[0])
+    uppX = max(c1[0], c2[0])
+    lowY = min(c1[1], c2[1])
+    uppY = max(c1[1], c2[1])
+    lowZ = min(c1[2], c2[2])
+    uppZ = max(c1[2], c2[2])
+    return Box(1, [[lowX, uppX], [lowY, uppY], [lowZ, uppZ]])
+
+def getCornersInside(box1, box2):
+    xUL = isUpperLowerInsideDimension(box1, box2, 0)
+    yUL = isUpperLowerInsideDimension(box1, box2, 1)
+    zUL = isUpperLowerInsideDimension(box1, box2, 2)
+    insideCorners = []
+    for upperX in range(2):
+        for upperY in range(2):
+            for upperZ in range(2):
+                if xUL[upperX] and yUL[upperY] and zUL[upperZ]:
+                    insideCorners.append(box2.getCorner(upperX, upperY, upperZ))
+    return insideCorners
+
+def isUpperLowerInsideDimension(box1, box2, dim):
+    UL = [0,0]
+    dimRange1 = box1.getRange(dim)
+    dimRange2 = box2.getRange(dim)
+    UL[0] = dimRange1[0] <= dimRange2[0] <= dimRange1[1]
+    UL[1] = dimRange1[0] <= dimRange2[1] <= dimRange1[1]
+    return UL
 
 if __name__ == '__main__':
     main()
