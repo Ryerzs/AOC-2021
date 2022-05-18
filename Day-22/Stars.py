@@ -163,6 +163,9 @@ def createNewBoxesFromCutout(box1, box2):
     print(insideCorners2)
     print(insideCorners1)
     print(newCutout.getVolume())
+    boxes = box1.splitAt(insideCorners2[0])
+    for b in boxes:
+        print(b.getVolume())
     pass
 
 def createBoxFromCorners(c1, c2):
