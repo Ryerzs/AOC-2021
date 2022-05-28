@@ -16,12 +16,10 @@ def main():
             cache_empty[(r[0][0], r[0][1])] = 0
             counts[r[0][0]] = 0 
             counts[r[0][1]] = 0 
-            
     start_time = time.time()
     c = cache_empty.copy()
     for i in range(len(seq) -1):
         c[(seq[i], seq[i+1])] += 1
-    
     N = 40
     counts[seq[-1]] = 1
     for i in range(N):
@@ -33,7 +31,6 @@ def main():
     for sub in c:
         counts[sub[0]] += c[sub]
     d = print_max_min(counts)
-
     dt = time.time() - start_time
     print(dt)
     print(d)
